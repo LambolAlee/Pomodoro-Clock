@@ -1,10 +1,10 @@
 from os.path import join
-from re import findall
 from queue import Queue
-from winsound import PlaySound as Play 
+from re import findall
 from winsound import SND_FILENAME as SF
-from PyQt5.QtCore import pyqtSignal, pyqtSlot
-from PyQt5.QtCore import QTimer, QThread, QObject
+from winsound import PlaySound as Play
+
+from PyQt5.QtCore import QObject, QThread, QTimer, pyqtSignal, pyqtSlot
 
 cdQueue = Queue()
 play_music = lambda music:Play(music, SF)
@@ -40,7 +40,7 @@ class TimeController(QThread):
     timerTempStop = pyqtSignal()
     timerStart = pyqtSignal()
     clearOld = pyqtSignal(str)
-    timeChanged = pyqtSignal(str, int, dict)
+    timeChanged = pyqtSignal(str, int, iter)
     circleChanged = pyqtSignal()
     eatTomato = pyqtSignal()
 
@@ -109,6 +109,7 @@ class TimeController(QThread):
 class TimeRunner(QObject):
     def __init__(self, controller):
         super(TimeRunner, self).__init__()
+        self.time_sign = ('h', 'm', 's')
         self.controller = controller
 
     def getPercent(self):
@@ -117,7 +118,10 @@ class TimeRunner(QObject):
     def convert(self, num):
         m, s = divmod(num, 60)
         h, m = divmod(m, 60)
-        return zip((h, m, s), ("h", "m", "s"))
+        for i, v in enumerate((h, m, s)):
+            if i != 2 and not v:
+                continue
+            yield f"{v}{self.time_sign[i]}"
 
     def minus(self):
         self.controller.countdown -= 1
@@ -126,7 +130,7 @@ class TimeRunner(QObject):
             #print("finished one")
             cdQueue.put(1)
             return
-        time = dict(self.convert(self.controller.countdown))
         self.controller.timeChanged.emit(
-            self.controller.type_, self.getPercent(), time
+            self.controller.type_, self.getPercent(), 
+            self.convert(self.controller.countdown)
         )

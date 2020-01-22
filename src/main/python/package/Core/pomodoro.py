@@ -1,25 +1,27 @@
-from ..Gui import image_rc
-from PyQt5.QtWidgets import QApplication, QMainWindow, QDialog, QProgressBar
-from PyQt5.QtWidgets import QInputDialog, QLineEdit
-from PyQt5.QtWidgets import QActionGroup, QAction
 from PyQt5.QtCore import QTimer, pyqtSignal
+from PyQt5.QtWidgets import (QAction, QActionGroup, QInputDialog, QLineEdit,
+                             QMainWindow)
+
+from ..Gui import image_rc
 from ..Gui.pomodoro_gui import Ui_MainWindow
-from ..Gui.about_dialog_gui import Ui_Dialog
 from .timeit import TimeController
+
 
 class Window(Ui_MainWindow, QMainWindow):
 
     quitCountDown = pyqtSignal()
 
     def __init__(self, ctx, *args, **kwargs):
-        '''
+        """
         Normally initialize the MainWindow and some attributes and slots
-        '''
+        """
         super(Window, self).__init__(*args, **kwargs)
         self.setupUi(self)
 
         self.ctx = ctx
         self.first_run = 1
+        self.profileActions = {}
+        self._profile_group = QActionGroup(self)
 
         self.init_slots()
         self.init_menu()
@@ -54,9 +56,7 @@ class Window(Ui_MainWindow, QMainWindow):
         self.long_restPB.setValue(0)
 
     def init_menu(self):
-        '''
-        Initialize the mojarity of the actions placed in the menu
-        '''
+        """Initialize the mojarity of the actions placed in the menu"""
         self.actions = MenuActions(self.ctx)
         self.actionAbout.triggered.connect(self.actions.showAbout)
         self.actionMinimum.triggered.connect(self.showMinimized)
@@ -71,15 +71,13 @@ class Window(Ui_MainWindow, QMainWindow):
         self.counterButton.clicked.connect(self.count)
 
     def init_slots(self):
-        '''
-        Initialize the labels, lcdnumbers, statusbar and menubar
-        '''
+        """Initialize the labels, lcdnumbers, statusbar and menubar"""
         # Initializethe slots of labels
         # These three label display the work time, rest time and long rest time.
         # To make the user interface more simple and keep your attention focused
-        # on the task. I use the label instead of extra buttons to realize the 
+        # on the task. I use the label instead of extra buttons to realize the
         # function of setting the time period quickly.
-        # Also, you can find a full-functioned setting panel in the preference 
+        # Also, you can find a full-functioned setting panel in the preference
         # menu and you can save these as a profile to quick load it when you use
         # the app next time as well.
         self.workLabel.doubleClicked.connect(self.setWorkTime)
@@ -90,9 +88,7 @@ class Window(Ui_MainWindow, QMainWindow):
         self.circleTimesLCD.doubleClicked.connect(self.setCircleTimes)
 
     def init_profiles_for_menu(self):
-        '''
-        Initialize the profiles found in the directory profiles and display them in the preferences menu. So you can get a easy access to use your profile quickly
-        '''
+        """Initialize the profiles found in the directory profiles and display them in the preferences menu. So you can get a easy access to use your profile quickly"""
         # Init the profile according to the global setting
         # Add the found profiles into the preferences menu and add them into
         # the ActionGroup, so you can only select one profile at one time
@@ -110,8 +106,6 @@ class Window(Ui_MainWindow, QMainWindow):
         return action
 
     def loadProfileActions(self):
-        self.profileActions = {}
-        self._profile_group = QActionGroup(self)
 
         for i in self.ctx.profileList:
             action = self.addProfileAction(i)
@@ -127,14 +121,6 @@ class Window(Ui_MainWindow, QMainWindow):
         self.restCD.setText(self.ctx.profile["rest"])
         self.long_restCD.setText(self.ctx.profile["long_rest"])
         self.circleTimesLCD.display(self.ctx.profile["circle_times"])
-
-    def _reformat(self, time):
-        stime = []
-        for key, value in time.items():
-            if key == 0 and value != 's':
-                continue
-            stime.extend((str(key), value))
-        return "".join(stime)
 
     def _setTime(self, title, information, default_set):
         # A wrapped function used for set*Time methods
@@ -172,7 +158,8 @@ class Window(Ui_MainWindow, QMainWindow):
 
     def setCircleTimes(self):
         times, ok = QInputDialog.getInt(
-            self, "Quick-settings:Circle Times", "Input your circle times", self.ctx.profile["circle_times"], 1, 9, 1
+            self, "Quick-settings:Circle Times", "Input your circle times", self.ctx.profile[
+                "circle_times"], 1, 9, 1
         )
         if not ok:
             times = self.ctx.profile["circle_times"]
@@ -194,7 +181,8 @@ class Window(Ui_MainWindow, QMainWindow):
 
     def quit_(self):
         self.ctx.profile.save()
-        self.ctx.global_setting["lastProfile"] = self._profile_group.checkedAction().text()
+        self.ctx.global_setting["lastProfile"] = self._profile_group.checkedAction(
+        ).text()
         self.ctx.saveGlobal()
         self.ctx.app.quit()
 
@@ -203,11 +191,10 @@ class Window(Ui_MainWindow, QMainWindow):
             self.ctx.global_setting["count"]), 1500
         )
 
-    def update(self, type_, pc, time):
+    def update(self, type_, pc, time_gen):
         pb = type_ + "PB"
         label = type_ + "CD"
-        stime = self._reformat(time)
-        getattr(self, label).setText(stime)
+        getattr(self, label).setText("".join(time_gen))
         getattr(self, pb).setValue(100 - pc)
 
     def updateLCD(self):
@@ -244,9 +231,10 @@ class Window(Ui_MainWindow, QMainWindow):
 
 
 class MenuActions:
-    '''
+    """
     A class contains the mojarity of the callback functions used in menus
-    '''
+    """
+
     def __init__(self, ctx):
         self.ctx = ctx
 

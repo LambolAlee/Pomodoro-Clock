@@ -1,9 +1,9 @@
-from json import load, dump
-from os.path import basename
-from os.path import join
 from collections import UserDict
-from PyQt5.QtCore import pyqtSignal
-from PyQt5.QtCore import QObject
+from json import dump, load
+from os.path import basename, join
+
+from PyQt5.QtCore import QObject, pyqtSignal
+
 
 class ReloadSig(QObject):
     reloadSig = pyqtSignal()

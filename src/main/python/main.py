@@ -1,16 +1,18 @@
-from os import listdir
-from os.path import join, basename
-from json import load, dump
-from fbs_runtime.application_context.PyQt5 import ApplicationContext
-from fbs_runtime.application_context.PyQt5 import cached_property
-from PyQt5.QtWidgets import QDialog
-from PyQt5.QtGui import QPixmap, QIcon
-from package.Core.pomodoro import Window
-from package.Gui.splasher import Splasher
-from package.Gui.about_dialog_gui import Ui_Dialog
-from package.Core.config import Profile
-
 import sys
+from json import dump, load
+from os import listdir
+from os.path import basename, join
+
+from fbs_runtime.application_context.PyQt5 import (ApplicationContext,
+                                                   cached_property)
+from PyQt5.QtGui import QIcon, QPixmap
+from PyQt5.QtWidgets import QDialog
+
+from package.Core.config import Profile
+from package.Core.pomodoro import Window
+from package.Gui.about_dialog_gui import Ui_Dialog
+from package.Gui.splasher import Splasher
+
 
 class AppContext(ApplicationContext):
 
