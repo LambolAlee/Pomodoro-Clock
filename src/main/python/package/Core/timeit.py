@@ -87,6 +87,7 @@ class TimeController(QThread):
         self.rest = self.ctx.profile["rest"]
         self.long_rest = self.ctx.profile["long_rest"]
         self.circle = self.ctx.profile["circle_times"]
+        self.work_rest_period = self.ctx.profile["work_rest_period"]
         self.time_queue = self.flat()
         self.over = False
 
@@ -95,7 +96,7 @@ class TimeController(QThread):
         for i in range(1, self.circle +1):
             time_queue.append((self.work +1, "work"))
             time_queue.append((self.rest +1, "rest"))
-            if i % 2 == 0:
+            if i % self.work_rest_period == 0:
                 time_queue.append((self.long_rest +1, "long_rest"))
         return iter(time_queue)
 
