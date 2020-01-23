@@ -40,7 +40,7 @@ class TimeController(QThread):
     timerTempStop = pyqtSignal()
     timerStart = pyqtSignal()
     clearOld = pyqtSignal(str)
-    timeChanged = pyqtSignal(str, int, iter)
+    timeChanged = pyqtSignal(str, int, object)
     circleChanged = pyqtSignal()
     eatTomato = pyqtSignal()
 

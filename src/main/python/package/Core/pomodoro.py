@@ -68,6 +68,7 @@ class Window(Ui_MainWindow, QMainWindow):
         self.optionButton.clicked.connect(self.actions.showOptions)
         self.controlButton.clicked.connect(self.control)
         self.stopButton.clicked.connect(self.stop)
+        self.stopButton.setEnabled(False)
         self.counterButton.clicked.connect(self.count)
 
     def init_slots(self):
@@ -181,8 +182,7 @@ class Window(Ui_MainWindow, QMainWindow):
 
     def quit_(self):
         self.ctx.profile.save()
-        self.ctx.global_setting["lastProfile"] = self._profile_group.checkedAction(
-        ).text()
+        self.ctx.global_setting["lastProfile"] = self._profile_group.checkedAction().text()
         self.ctx.saveGlobal()
         self.ctx.app.quit()
 

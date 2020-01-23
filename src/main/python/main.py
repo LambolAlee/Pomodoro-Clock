@@ -26,6 +26,7 @@ class AppContext(ApplicationContext):
         self.app.processEvents()
 
         ui = Window(self)
+        ui.setStyleSheet(self.style)
         ui.show()
 
         splash_window.finish(ui)
@@ -39,6 +40,12 @@ class AppContext(ApplicationContext):
     def saveGlobal(self):
         with open(self.globalSettingFile, 'w') as f:
             dump(self.global_setting, f)
+
+    @cached_property
+    def style(self):
+        with open(self.get_resource('style.qss'), 'r') as f:
+            style_data = f.read()
+        return style_data
 
     @cached_property
     def musics(self):

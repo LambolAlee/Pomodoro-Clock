@@ -1,0 +1,109 @@
+/* === QGroupBox === */
+QGroupBox {
+    border: 1px solid #555;
+    margin-top: 2ex;
+}
+
+QGroupBox::title {
+    border: 1px solid #555;
+    border-radius: 10px;
+    color: black;
+    subcontrol-origin: margin;
+    subcontrol-position: top center;
+}
+
+/* === QMenu === */
+QMenu {
+    background-color: #66CC66;
+    border: 1px solid gray;
+    color: white;
+    padding: 1px;
+}
+
+QMenu::item {
+    padding: 2px 25px 2px 20px;
+    border: 1px solid transparent;
+}
+
+QMenu::item:disabled {
+    color: #666666;
+}
+
+QMenu::item:selected {
+    border-color: gray;
+    background: #999999;
+}
+
+QMenu::separator {
+    height: 1px;
+    background: #DDDDDD;
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-top: 1px;
+    margin-bottom: 1px;
+}
+
+QMenu::indicator {
+    width: 13px;
+    height: 13px;
+}
+
+/* === QMenuBar === */
+QMenuBar {
+    background-color: #FF7061;
+    color: white;
+}
+
+QMenuBar::item {
+    background: transparent;
+}
+
+QMenuBar::item:disabled {
+    color: #CCCCCC;
+}
+
+QMenuBar::item:selected {
+    background: #66CC66;
+}
+
+QMenuBar::item:pressed {
+    background: #66CC66;
+}
+
+/* === QPushButton === */
+QPushButton {
+    border: 1px solid #555;
+    padding: 4px;
+}
+
+QPushButton:hover {
+    background-color: #E7EEF7;
+}
+
+QPushButton:pressed {
+    background-color: #ADCEF7;
+    border-color: #555;
+    color: #AAA;
+}
+
+QPushButton:disabled {
+    background-color: #CCCCCC;
+}
+
+/* ===QLineEdit=== */
+QLineEdit {
+    font: normal bold 25px;
+}
+
+/* ===QProgressBar=== */
+QProgressBar {  
+    color : solid gray;
+    border: 2px solid gray;
+    border-radius: 5px;
+    background: #F8F8F8;
+    padding: 0px;
+}
+
+QProgressBar::chunk {
+    background: rgb(137, 249, 83);
+}

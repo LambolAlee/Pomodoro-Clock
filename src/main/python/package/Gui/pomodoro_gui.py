@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'pomodoro.ui'
 #
-# Created by: PyQt5 UI code generator 5.14.1
+# AddProfiled by: PyQt5 UI code generator 5.14.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -298,21 +298,19 @@ class Ui_MainWindow(object):
         icon5.addPixmap(QtGui.QPixmap(":/control_panel/money-bag-dollar.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.actionDonate.setIcon(icon5)
         self.actionDonate.setObjectName("actionDonate")
-        self.actionRegister = QtWidgets.QAction(MainWindow)
-        self.actionRegister.setObjectName("actionRegister")
         self.actionQuit = QtWidgets.QAction(MainWindow)
         self.actionQuit.setObjectName("actionQuit")
         self.actionHelp = QtWidgets.QAction(MainWindow)
         self.actionHelp.setObjectName("actionHelp")
-        self.actionCreate = QtWidgets.QAction(MainWindow)
-        self.actionCreate.setObjectName("actionCreate")
+        self.actionAddProfile = QtWidgets.QAction(MainWindow)
+        self.actionAddProfile.setObjectName("actionAddProfile")
         self.actionEdit = QtWidgets.QAction(MainWindow)
         self.actionEdit.setObjectName("actionEdit")
-        self.actionRemove = QtWidgets.QAction(MainWindow)
-        self.actionRemove.setObjectName("actionRemove")
+        self.actionRmProfile = QtWidgets.QAction(MainWindow)
+        self.actionRmProfile.setObjectName("actionRmProfile")
         self.menuProfiles.addAction(self.actionEdit)
-        self.menuProfiles.addAction(self.actionCreate)
-        self.menuProfiles.addAction(self.actionRemove)
+        self.menuProfiles.addAction(self.actionAddProfile)
+        self.menuProfiles.addAction(self.actionRmProfile)
         self.menuPreferences.addAction(self.actionOptions)
         self.menuPreferences.addAction(self.menuProfiles.menuAction())
         self.menuPreferences.addSeparator()
@@ -320,7 +318,6 @@ class Ui_MainWindow(object):
         self.menuHelp.addAction(self.actionHelp)
         self.menuHelp.addSeparator()
         self.menuHelp.addAction(self.actionDonate)
-        self.menuHelp.addAction(self.actionRegister)
         self.menu_Window.addAction(self.actionMinimum)
         self.menu_Window.addAction(self.actionQuit)
         self.menubar.addAction(self.menuPreferences.menuAction())
@@ -334,7 +331,7 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "Eat Tomatoes!"))
-        self.groupBox.setTitle(_translate("MainWindow", "Pomodoro Clock"))
+        self.groupBox.setTitle(_translate("MainWindow", "<Pomodoro Clock>"))
         self.workLabel.setText(_translate("MainWindow", "Work"))
         self.restLabel.setText(_translate("MainWindow", "Rest"))
         self.longRestLabel.setText(_translate("MainWindow", "Long"))
@@ -351,14 +348,13 @@ class Ui_MainWindow(object):
         self.actionOptions.setShortcut(_translate("MainWindow", "Ctrl+Shift+P"))
         self.actionMinimum.setText(_translate("MainWindow", "&Minimum"))
         self.actionDonate.setText(_translate("MainWindow", "Donate"))
-        self.actionRegister.setText(_translate("MainWindow", "Register"))
         self.actionQuit.setText(_translate("MainWindow", "&Quit"))
         self.actionQuit.setShortcut(_translate("MainWindow", "Ctrl+Q"))
         self.actionHelp.setText(_translate("MainWindow", "Help for Eat Tomatoes!"))
         self.actionHelp.setShortcut(_translate("MainWindow", "?"))
-        self.actionCreate.setText(_translate("MainWindow", "Create"))
+        self.actionAddProfile.setText(_translate("MainWindow", "Add"))
         self.actionEdit.setText(_translate("MainWindow", "Edit"))
-        self.actionRemove.setText(_translate("MainWindow", "Remove"))
+        self.actionRmProfile.setText(_translate("MainWindow", "Remove"))
 from . import image_rc
 
 
