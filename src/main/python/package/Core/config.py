@@ -11,7 +11,19 @@ class ReloadSig(QObject):
         super(ReloadSig, self).__init__()
 
 class Profile(UserDict):
+    """
+    The Profile class is used to handle profile settings.
 
+    reloadObj:
+        send a reloadSig to the pomodoro module to adjust the cntents 
+        displayed in the main window.
+    
+    reload:
+        load the config by passing the name of the profile to it.
+    
+    save:
+        save the changed profile.
+    """
     def __init__(self, ctx):
         self.ctx = ctx
         self.reloadObj = ReloadSig()
@@ -19,6 +31,12 @@ class Profile(UserDict):
         self._loadProfile(self.ctx.global_setting["lastProfile"])
 
     def _operate(self, flag, new=False):
+        """
+        read profile from the specific profile file,
+        or write the changed profile data back into the file.
+
+        if the profile is new, the method will return the default settings.
+        """
         file_ = self.current_profile
         if flag == 'r':
             if new:
@@ -30,6 +48,10 @@ class Profile(UserDict):
                 dump(self.data, f)
 
     def _loadProfile(self, name):
+        """
+        Help to load the profile by its name using ._operate method, 
+        the method will judge whether the profile exists or not.
+        """
         new = False
         self.name = name
         try:

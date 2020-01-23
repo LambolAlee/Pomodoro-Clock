@@ -19,8 +19,10 @@ class Window(Ui_MainWindow, QMainWindow):
         self.setupUi(self)
 
         self.ctx = ctx
+        # A flag to distinguish between pausing and first running 
+        # 1: first_run
         self.first_run = 1
-        self.profileActions = {}
+        self.profileActions = {}        # A dict contains profiles
         self._profile_group = QActionGroup(self)
 
         self.init_slots()
@@ -31,22 +33,29 @@ class Window(Ui_MainWindow, QMainWindow):
         self.init_timer()
 
     def init_timer(self):
+        """Initialize the timer and the TimeController"""
+        # The status of continung(1) and pausing(-1)
         self.controlStatus = -1
-        self.timer = QTimer()
+        self.timer = QTimer()       # Initialize the timer
         self.controller = TimeController(self.ctx)
         self.timer.setInterval(1000)
         self.timer.timeout.connect(self.controller.runner.minus)
         self.quitCountDown.connect(self.controller.quit_)
+
         self.controller.timeChanged.connect(self.update)
         self.controller.clearOld.connect(self.clearOld)
         self.controller.circleChanged.connect(self.updateLCD)
         self.controller.started.connect(self.timer.start)
         self.controller.finished.connect(self.reset)
+        # After a whole counting down period, we say you eat a tomato.
         self.controller.eatTomato.connect(self.eat)
         self.controller.timerStart.connect(self.timer.start)
         self.controller.timerTempStop.connect(self.timer.stop)
 
     def init_data(self):
+        """Display the data in the profile on the main window"""
+        # Circle: work-rest period
+        # Every 2 work-rest period, there is a long_rest.
         self.circleTimesLCD.display(self.ctx.profile["circle_times"])
         self.workCD.setText(self.ctx.profile["work"])
         self.workPB.setValue(0)
@@ -64,6 +73,7 @@ class Window(Ui_MainWindow, QMainWindow):
         self.actionOptions.triggered.connect(self.actions.showOptions)
 
     def init_buttons(self):
+        """Initialize the buttons lay out on the main window"""
         self.quitButton.clicked.connect(self.quit_)
         self.optionButton.clicked.connect(self.actions.showOptions)
         self.controlButton.clicked.connect(self.control)
@@ -90,13 +100,13 @@ class Window(Ui_MainWindow, QMainWindow):
 
     def init_profiles_for_menu(self):
         """Initialize the profiles found in the directory profiles and display them in the preferences menu. So you can get a easy access to use your profile quickly"""
-        # Init the profile according to the global setting
+        # Init the profile according to the global setting: "lastProfile"
         # Add the found profiles into the preferences menu and add them into
         # the ActionGroup, so you can only select one profile at one time
         self.ctx.profile.reloadObj.reloadSig.connect(self.reload)
         self.loadProfileActions()
 
-    def addProfileAction(self, p):
+    def addOneProfileAction(self, p):
         # QAction(name, parent)
         action = QAction(p, self)
         action.setCheckable(True)
@@ -107,9 +117,8 @@ class Window(Ui_MainWindow, QMainWindow):
         return action
 
     def loadProfileActions(self):
-
         for i in self.ctx.profileList:
-            action = self.addProfileAction(i)
+            action = self.addOneProfileAction(i)
             # We can get the action by its name
             self.profileActions[i] = action
             self._profile_group.addAction(action)
@@ -118,6 +127,10 @@ class Window(Ui_MainWindow, QMainWindow):
         self.profileActions[self.ctx.profile.name].setChecked(True)
 
     def reload(self):
+        """
+        When reloadSig triggered, this reload method will update the data
+        shown on the main window.
+        """
         self.workCD.setText(self.ctx.profile["work"])
         self.restCD.setText(self.ctx.profile["rest"])
         self.long_restCD.setText(self.ctx.profile["long_rest"])
@@ -181,6 +194,7 @@ class Window(Ui_MainWindow, QMainWindow):
         self.statusBar.showMessage("You have eaten a tomato just now!", 2000)
 
     def quit_(self):
+        """Quit the app"""
         self.ctx.profile.save()
         self.ctx.global_setting["lastProfile"] = self._profile_group.checkedAction().text()
         self.ctx.saveGlobal()
@@ -209,16 +223,19 @@ class Window(Ui_MainWindow, QMainWindow):
 
     def control(self):
         self.controlStatus = -self.controlStatus
-        if self.controlStatus == 1:
+        if self.controlStatus == 1:     # pause counting down
             self.controlButton.setIcon(self.ctx.ipause)
             self.statusBar.showMessage("continue", 1000)
             if self.first_run:
                 self.first_run = 0
                 self.stopButton.setEnabled(True)
                 self.statusBar.showMessage("preparing...", 2000)
+                # Initialize the controller's counting down related data,
+                # in order to keep the controller receiving
+                # the newest profile data.
                 self.controller.reset()
                 self.controller.start()
-            else:
+            else:       # continue counting down
                 self.timer.start()
         else:
             self.controlButton.setIcon(self.ctx.icontinue)
@@ -226,6 +243,7 @@ class Window(Ui_MainWindow, QMainWindow):
             self.timer.stop()
 
     def stop(self):
+        """Quit counting down but not quit the app"""
         self.quitCountDown.emit()
         self.statusBar.showMessage("stopped", 1000)
 
@@ -239,6 +257,7 @@ class MenuActions:
         self.ctx = ctx
 
     def showAbout(self):
+        """Show the about window"""
         self.ctx.about_gui.exec_()
 
     def showOptions(self):

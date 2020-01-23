@@ -22,18 +22,19 @@ class AppContext(ApplicationContext):
         self.getName = lambda filename: basename(filename).split('.')[0]
 
     def run(self):
+        # load the splash window
         splash_window = Splasher(self)
         self.app.processEvents()
-
+        # load the main window
         ui = Window(self)
         ui.setStyleSheet(self.style)
         ui.show()
 
         splash_window.finish(ui)
-        return self.app.exec_()
+        return self.app.exec_()         # start event loop
 
-    def loadGlobal(self, globalProfile):
-        with open(globalProfile, 'r') as f:
+    def loadGlobal(self, globalSettingFile):
+        with open(globalSettingFile, 'r') as f:
             global_setting = load(f)
         return global_setting
 
