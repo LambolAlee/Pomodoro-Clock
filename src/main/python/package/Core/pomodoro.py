@@ -1,10 +1,11 @@
-from PyQt5.QtCore import QTimer, pyqtSignal
+from PyQt5.QtCore import QTimer, pyqtSignal, QObject
 from PyQt5.QtWidgets import (QAction, QActionGroup, QInputDialog, QLineEdit,
-                             QMainWindow)
+                             QMainWindow, QMessageBox)
 
 from ..Gui import image_rc
 from ..Gui.pomodoro_gui import Ui_MainWindow
 from .timeit import TimeController
+from PyQt5 import sip
 
 
 class Window(Ui_MainWindow, QMainWindow):
@@ -25,11 +26,11 @@ class Window(Ui_MainWindow, QMainWindow):
         self.profileActions = {}        # A dict contains profiles
         self._profile_group = QActionGroup(self)
 
-        self.init_slots()
         self.init_menu()
+        self.init_data()
+        self.init_slots()
         self.init_buttons()
         self.init_profiles_for_menu()
-        self.init_data()
         self.init_timer()
 
     def init_timer(self):
@@ -56,12 +57,9 @@ class Window(Ui_MainWindow, QMainWindow):
         """Display the data in the profile on the main window"""
         # Circle: work-rest period
         # Every 2 work-rest period, there is a long_rest.
-        self.circleTimesLCD.display(self.ctx.profile["circle_times"])
-        self.workCD.setText(self.ctx.profile["work"])
+        self.reload()
         self.workPB.setValue(0)
-        self.restCD.setText(self.ctx.profile["rest"])
         self.restPB.setValue(0)
-        self.long_restCD.setText(self.ctx.profile["long_rest"])
         self.long_restPB.setValue(0)
 
     def init_menu(self):
@@ -71,6 +69,9 @@ class Window(Ui_MainWindow, QMainWindow):
         self.actionMinimum.triggered.connect(self.showMinimized)
         self.actionQuit.triggered.connect(self.quit_)
         self.actionOptions.triggered.connect(self.actions.showOptions)
+        self.actionDonate.triggered.connect(
+            lambda: self.actions.donate(self)
+        )
 
     def init_buttons(self):
         """Initialize the buttons lay out on the main window"""
@@ -98,6 +99,14 @@ class Window(Ui_MainWindow, QMainWindow):
         # Initialize the slots of circle lcdnumber
         self.circleTimesLCD.doubleClicked.connect(self.setCircleTimes)
 
+        #Initialize the slots of profile_settings_window
+        self.ctx.settings_gui.profileRemoved.connect(
+            self.removeProfile)
+        self.ctx.settings_gui.newProfileSig.connect(
+            self.addProfileActions)
+        self.ctx.settings_gui.updateSig.connect(
+            self.refreshSelectedActionAndData)
+
     def init_profiles_for_menu(self):
         """Initialize the profiles found in the directory profiles and display them in the preferences menu. So you can get a easy access to use your profile quickly"""
         # Init the profile according to the global setting: "lastProfile"
@@ -106,9 +115,13 @@ class Window(Ui_MainWindow, QMainWindow):
         self.ctx.profile.reloadObj.reloadSig.connect(self.reload)
         self.loadProfileActions()
 
-    def addOneProfileAction(self, p):
+    def refreshSelectedActionAndData(self):
+        self.reload()
+        self.profileActions[self.ctx.profile.name].setChecked(True)
+
+    def addOneProfileAction(self, name):
         # QAction(name, parent)
-        action = QAction(p, self)
+        action = QAction(name, self)
         action.setCheckable(True)
         # connected with the reload method provided by profile object
         action.triggered.connect(
@@ -116,15 +129,26 @@ class Window(Ui_MainWindow, QMainWindow):
         )
         return action
 
-    def loadProfileActions(self):
-        for i in self.ctx.profileList:
-            action = self.addOneProfileAction(i)
-            # We can get the action by its name
-            self.profileActions[i] = action
+    def addProfileActions(self, names):
+        for name in names:
+            action = self.addOneProfileAction(name)
+            self.profileActions[name] = action
             self._profile_group.addAction(action)
             self.menuPreferences.addAction(action)
 
+    def loadProfileActions(self):
+        self.addProfileActions(self.ctx.profileList)
         self.profileActions[self.ctx.profile.name].setChecked(True)
+
+    def removeProfile(self, name):
+        try:
+            action = self.profileActions.pop(name)
+        except KeyError:
+            pass
+        else:
+            self._profile_group.removeAction(action)
+            self.menuPreferences.removeAction(action)
+            sip.delete(action)
 
     def reload(self):
         """
@@ -135,50 +159,51 @@ class Window(Ui_MainWindow, QMainWindow):
         self.restCD.setText(self.ctx.profile["rest"])
         self.long_restCD.setText(self.ctx.profile["long_rest"])
         self.circleTimesLCD.display(self.ctx.profile["circle_times"])
-
-    def _setTime(self, title, information, default_set):
-        # A wrapped function used for set*Time methods
-        time, ok = QInputDialog.getText(
-            self, f"Quick-settings:{title}", information, QLineEdit.Normal,
-            default_set
-        )
-        # We will add config into it, so the following code is a simple test.
-        if not ok:
-            return default_set
+        if self.ctx.log4p.query(f"fatal:{self.ctx.profile.name}:"):
+            self.controlButton.setEnabled(False)
         else:
-            return time
+            self.controlButton.setEnabled(True)
+
+    def _set(self, name, attr, value):
+        if value:
+            self.ctx.profile[attr] = value
+            if not self.ctx.inspector.check(value, attr):
+                self.ctx.log4p.remove(f"fatal:{name}:{attr}")
+        if self.ctx.log4p.query(f"fatal:{name}:") is None:
+            self.controlButton.setEnabled(True)
+        self.ctx.ask_dialog.close()
 
     def setWorkTime(self):
-        self.ctx.profile["work"] = self._setTime(
-            "Quick-settings:Working Time", "Input your single working time", self.ctx.profile["work"]
-        )
+        f = lambda value: self._set(self.ctx.profile.name, "work", value)
+        self.ctx.ask_dialog.replySig.connect(f)
+        self.ctx.ask_dialog.ask("work", self.ctx.profile["work"])
         self.workCD.setText(self.ctx.profile["work"])
         self.workPB.setValue(0)
+        self.ctx.ask_dialog.replySig.disconnect(f)
 
     def setRestTime(self):
-        self.ctx.profile["rest"] = self._setTime(
-            "Quick-settings:Resting Time", "Input your single resting time",
-            self.ctx.profile["rest"]
-        )
+        f = lambda value: self._set(self.ctx.profile.name, "rest", value)
+        self.ctx.ask_dialog.replySig.connect(f)
+        self.ctx.ask_dialog.ask("rest", self.ctx.profile["rest"])
         self.restCD.setText(self.ctx.profile["rest"])
         self.restPB.setValue(0)
+        self.ctx.ask_dialog.replySig.disconnect(f)
 
     def setLongRestTime(self):
-        self.ctx.profile["long_rest"] = self._setTime(
-            "Quick-settings:Long-resting Time", "Input your single long-resting time", self.ctx.profile["long_rest"]
-        )
+        f = lambda value: self._set(self.ctx.profile.name, "long_rest", value)
+        self.ctx.ask_dialog.replySig.connect(f)
+        self.ctx.ask_dialog.ask("long-resting", self.ctx.profile["long_rest"])
         self.long_restCD.setText(self.ctx.profile["long_rest"])
         self.long_restPB.setValue(0)
+        self.ctx.ask_dialog.replySig.disconnect(f)
 
     def setCircleTimes(self):
-        times, ok = QInputDialog.getInt(
-            self, "Quick-settings:Circle Times", "Input your circle times", self.ctx.profile[
-                "circle_times"], 1, 9, 1
-        )
-        if not ok:
-            times = self.ctx.profile["circle_times"]
-        self.ctx.profile["circle_times"] = times
-        self.circleTimesLCD.display(times)
+        f = lambda value: self._set(
+            self.ctx.profile.name, "circle_times", value)
+        self.ctx.ask_dialog.replySig.connect(f)
+        self.ctx.ask_dialog.ask("circle_times",self.ctx.profile["circle_times"])
+        self.circleTimesLCD.display(self.ctx.profile["circle_times"])
+        self.ctx.ask_dialog.replySig.disconnect(f)
 
     def reset(self):
         self.timer.stop()
@@ -261,4 +286,8 @@ class MenuActions:
         self.ctx.about_gui.exec_()
 
     def showOptions(self):
-        print("show to you!")
+        self.ctx.settings_gui.reload_data()
+        self.ctx.settings_gui.exec_()
+
+    def donate(self, window):
+        QMessageBox.information(window, "Hint", '<b style="color:gold;">氪金</b>通道暂未开启')

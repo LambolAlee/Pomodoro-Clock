@@ -1,10 +1,10 @@
 /* === QGroupBox === */
-QGroupBox {
+QGroupBox#groupBox {
     border: 1px solid #555;
     margin-top: 2ex;
 }
 
-QGroupBox::title {
+QGroupBox#groupBox::title {
     border: 1px solid #555;
     border-radius: 10px;
     color: black;
@@ -31,7 +31,7 @@ QMenu::item:disabled {
 
 QMenu::item:selected {
     border-color: gray;
-    background: #999999;
+    background: lightgreen;
 }
 
 QMenu::separator {
@@ -74,10 +74,11 @@ QMenuBar::item:pressed {
 QPushButton {
     border: 1px solid #555;
     padding: 4px;
+    border-radius: 20px;
 }
 
 QPushButton:hover {
-    background-color: #E7EEF7;
+    background-color: rgb(208,225,247);
 }
 
 QPushButton:pressed {
@@ -90,20 +91,48 @@ QPushButton:disabled {
     background-color: #CCCCCC;
 }
 
-/* ===QLineEdit=== */
+/* === QLineEdit === */
 QLineEdit {
     font: normal bold 25px;
 }
 
-/* ===QProgressBar=== */
+/* === QSpinBox === */
+QSpinBox {
+    font: normal bold 25px;
+}
+
+/* === QProgressBar === */
 QProgressBar {  
     color : solid gray;
     border: 2px solid gray;
-    border-radius: 5px;
+    border-radius: 8px;
     background: #F8F8F8;
     padding: 0px;
 }
 
 QProgressBar::chunk {
     background: rgb(137, 249, 83);
+}
+
+/* === Qlabel === */
+QLabel#workLabel:hover, #restLabel:hover, #longRestLabel:hover,
+QLabel#workLabel:selected, #restLabel:selected, #longRestLabel:selected
+{
+    background: rgba(195, 195, 195, 100);
+    border-radius: 5px;
+}
+
+QLabel#workCD, #restCD, #long_restCD {
+    border: 1px solid rgb(179,179,179);
+    border-radius: 5px;
+}
+
+/* === QLCDNumber === */
+QLCDNumber {
+    border: 2px solid #555;
+    border-radius: 5px;
+}
+
+QLCDNumber:hover, :selected {
+    background: rgba(217,217,217, 150);
 }

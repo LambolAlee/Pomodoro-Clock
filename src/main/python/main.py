@@ -1,5 +1,5 @@
 import sys
-from json import dump, load
+from json import dump, loads
 from os import listdir
 from os.path import basename, join
 
@@ -8,8 +8,12 @@ from fbs_runtime.application_context.PyQt5 import (ApplicationContext,
 from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtWidgets import QDialog
 
-from package.Core.config import Profile
+from package.Core.profile import Profile
 from package.Core.pomodoro import Window
+from package.Core.profile_window import ProfileSettingsDialog
+from package.Core.ask import Ask_Dialog
+from package.Core.profilelogger import Log4P
+from package.Core.inspection import Inspector
 from package.Gui.about_dialog_gui import Ui_Dialog
 from package.Gui.splasher import Splasher
 
@@ -20,6 +24,7 @@ class AppContext(ApplicationContext):
         super(AppContext, self).__init__()
 
         self.getName = lambda filename: basename(filename).split('.')[0]
+        self.compose = lambda name: join(self.profilesDir, f'{name}.json')
 
     def run(self):
         # load the splash window
@@ -33,20 +38,29 @@ class AppContext(ApplicationContext):
         splash_window.finish(ui)
         return self.app.exec_()         # start event loop
 
+    def loadFile(self, file_):
+        with open(file_, 'r', encoding='utf-8') as f:
+            data = f.read()
+        return data
+
     def loadGlobal(self, globalSettingFile):
-        with open(globalSettingFile, 'r') as f:
-            global_setting = load(f)
-        return global_setting
+        return loads(self.loadFile(globalSettingFile), encoding='utf-8')
 
     def saveGlobal(self):
         with open(self.globalSettingFile, 'w') as f:
             dump(self.global_setting, f)
 
     @cached_property
+    def basic(self):
+        return ["work", "rest", "long_rest", "circle_times"]
+
+    @cached_property
+    def basic_musics(self):
+        return ["work_music", "rest_music", "end_music"]
+
+    @cached_property
     def style(self):
-        with open(self.get_resource('style.qss'), 'r') as f:
-            style_data = f.read()
-        return style_data
+        return self.loadFile(self.get_resource("style.qss"))
 
     @cached_property
     def musics(self):
@@ -58,8 +72,24 @@ class AppContext(ApplicationContext):
         return _musics
 
     @cached_property
+    def toBeInspected(self):
+        return self.basic + self.basic_musics
+
+    @cached_property
     def profile(self):
         return Profile(self)
+
+    @cached_property
+    def shadowProfile(self):
+        return ShadowProfile(self)
+
+    @cached_property
+    def inspector(self):
+        return Inspector(self)
+
+    @cached_property
+    def log4p(self):
+        return Log4P()
 
     @cached_property
     def profileList(self):
@@ -71,6 +101,10 @@ class AppContext(ApplicationContext):
     @cached_property
     def default_profile(self):
         return self.get_resource("profiles/default.json")
+
+    @cached_property
+    def default_profile_data(self):
+        return loads(self.loadFile(self.default_profile), encoding="utf-8")
 
     @cached_property
     def globalSettingFile(self):
@@ -106,6 +140,16 @@ class AppContext(ApplicationContext):
         ui = Ui_Dialog()
         ui.setupUi(self.build_settings["version"], Dialog)
         return Dialog
+
+    @cached_property
+    def settings_gui(self):
+        ui = ProfileSettingsDialog(self)
+        return ui
+
+    @cached_property
+    def ask_dialog(self):
+        ui = Ask_Dialog()
+        return ui
 
 
 if __name__ == '__main__':

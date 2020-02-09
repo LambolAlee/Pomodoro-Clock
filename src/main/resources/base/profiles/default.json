@@ -2,7 +2,7 @@
     "work":"25m",
     "rest":"5m",
     "long_rest":"15m",
-    "circle_times":2,
+    "circle_times":"2",
     "work_rest_period":2,
     "work_music":"work.wav",
     "rest_music":"rest.wav",

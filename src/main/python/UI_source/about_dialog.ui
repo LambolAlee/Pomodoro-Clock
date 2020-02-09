@@ -6,22 +6,22 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>603</width>
-    <height>243</height>
+    <width>714</width>
+    <height>306</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>About this-Eat Tomatoes！</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../img/image_rc.qrc">
+   <iconset>
     <normaloff>:/window_image/tomato.png</normaloff>:/window_image/tomato.png</iconset>
   </property>
   <widget class="QPushButton" name="pushButton">
    <property name="geometry">
     <rect>
-     <x>450</x>
-     <y>190</y>
+     <x>580</x>
+     <y>260</y>
      <width>112</width>
      <height>34</height>
     </rect>
@@ -66,8 +66,8 @@
     <rect>
      <x>180</x>
      <y>70</y>
-     <width>411</width>
-     <height>91</height>
+     <width>521</width>
+     <height>171</height>
     </rect>
    </property>
    <property name="font">
@@ -78,7 +78,7 @@
     </font>
    </property>
    <property name="text">
-    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;Version Beta &lt;/span&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;0.0.1 &lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;This program is used to keep you focused.&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;It is based on the theory of Pomodoro.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;Version Beta &lt;/span&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;0.0.1 &lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;This program is used to keep you focused.&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;It is based on the theory of Pomodoro.&lt;/span&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-family:'font/han.otf','PingFang SC','Lantinghei SC','Microsoft Yahei','Hiragino Sans GB','Microsoft Sans Serif','WenQuanYi Micro Hei','sans'; color:#6e4832; background-color:#f9f5ed;&quot;&gt;Icons by &lt;/span&gt;&lt;a href=&quot;http://p.yusukekamiyamane.com/&quot;&gt;&lt;span style=&quot; font-family:'font/han.otf','PingFang SC','Lantinghei SC','Microsoft Yahei','Hiragino Sans GB','Microsoft Sans Serif','WenQuanYi Micro Hei','sans'; text-decoration: underline; color:#4484c2; background-color:#f9f5ed;&quot;&gt;Yusuke Kamiyamane&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-family:'font/han.otf','PingFang SC','Lantinghei SC','Microsoft Yahei','Hiragino Sans GB','Microsoft Sans Serif','WenQuanYi Micro Hei','sans'; color:#6e4832; background-color:#f9f5ed;&quot;&gt;.&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-family:'font/han.otf','PingFang SC','Lantinghei SC','Microsoft Yahei','Hiragino Sans GB','Microsoft Sans Serif','WenQuanYi Micro Hei','sans'; color:#6e4832; background-color:#f9f5ed;&quot;&gt;Licensed under a &lt;/span&gt;&lt;a href=&quot;http://creativecommons.org/licenses/by/3.0/&quot;&gt;&lt;span style=&quot; font-family:'font/han.otf','PingFang SC','Lantinghei SC','Microsoft Yahei','Hiragino Sans GB','Microsoft Sans Serif','WenQuanYi Micro Hei','sans'; text-decoration: underline; color:#4484c2; background-color:#f9f5ed;&quot;&gt;Creative Commons Attribution 3.0 License&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-family:'font/han.otf','PingFang SC','Lantinghei SC','Microsoft Yahei','Hiragino Sans GB','Microsoft Sans Serif','WenQuanYi Micro Hei','sans'; color:#6e4832; background-color:#f9f5ed;&quot;&gt;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
    <property name="alignment">
     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
@@ -98,9 +98,7 @@
    </property>
   </widget>
  </widget>
- <resources>
-  <include location="../img/image_rc.qrc"/>
- </resources>
+ <resources/>
  <connections>
   <connection>
    <sender>pushButton</sender>

@@ -1,13 +1,11 @@
 from os.path import join
 from queue import Queue
 from re import findall
-from winsound import SND_FILENAME as SF
-from winsound import PlaySound as Play
 
+from playsound import playsound
 from PyQt5.QtCore import QObject, QThread, QTimer, pyqtSignal, pyqtSlot
 
 cdQueue = Queue()       # Used to block the controller thread
-play_music = lambda music:Play(music, SF)
 
 # Calculate the total secs
 hour = lambda timeint:timeint*3600
@@ -55,9 +53,9 @@ class TimeController(QThread):
 
     flat:(i.e.)
         receive profile data: 
-            work: 5s  |  rest:2s  |  long_rest:1s  |  circle_times: 3
+            work: 5s  |  rest:2s  |  long_rest:1s  |  circle_times: 5
         return:
-            [5, 2, 5, 2, 1, 5, 2]
+            [5, 2, 5, 2, 1, 5, 2, 5, 2, 1, 5, 2]
         extra: every 2 work-rest period comes 1 long_rest
 
     quit_:
@@ -86,13 +84,15 @@ class TimeController(QThread):
         self.work = self.ctx.profile["work"]
         self.rest = self.ctx.profile["rest"]
         self.long_rest = self.ctx.profile["long_rest"]
-        self.circle = self.ctx.profile["circle_times"]
+        self.circle = int(self.ctx.profile["circle_times"])
         self.work_rest_period = self.ctx.profile["work_rest_period"]
         self.time_queue = self.flat()
         self.over = False
 
     def flat(self):
         time_queue = []
+        if not self.circle:
+            return iter([(self.work +1, "work")])
         for i in range(1, self.circle +1):
             time_queue.append((self.work +1, "work"))
             time_queue.append((self.rest +1, "rest"))
@@ -124,21 +124,21 @@ class TimeController(QThread):
                 if self.first_run:
                     self.first_run = 0
                 else:
-                    play_music(self.ctx.musics[self.type_])
+                    playsound(self.ctx.musics[self.type_])
                     self.clearOld.emit(oldType)
 
                 if self.type_ == "rest":
                     self.circleChanged.emit()
 
                 self.timerStart.emit()
-                cdQueue.get()       # Block the thread.
+                cdQueue.get()       # Block the thread
 
                 if self.over:       # self.quit_ was called
                     raise StopIteration
         except StopIteration:
             if not self.over:       # normally quit the thread
                 self.eatTomato.emit()
-                play_music(self.ctx.musics["long_rest"])
+                playsound(self.ctx.musics["long_rest"])
             else:                   # self.quit_ was called
                 self.clearOld.emit(oldType)
 

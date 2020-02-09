@@ -12,6 +12,11 @@
 
 &emsp;&emsp;PyQt 5.14.1
 
+
+#### Version:
+
+&emsp;&emsp;Beta 2.0.0
+
 #### Icon resources:
 
 &emsp;&emsp;Icons by [Yusuke Kamiyamane](http://p.yusukekamiyamane.com/). Licensed under a [Creative Commons Attribution 3.0 License](http://creativecommons.org/licenses/by/3.0/).
@@ -22,4 +27,4 @@
 
 #### Attention:
 
-&emsp;&emsp;The application is still under developed though I have realized the core function. There are some functions that are not that important but can give the user a more fluent using experience.
+&emsp;&emsp;The application is still under developed though I have realized the core function. There are some functions that are not that important but can give the user a better using experience.

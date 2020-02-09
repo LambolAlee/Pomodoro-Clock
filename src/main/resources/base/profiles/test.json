@@ -1,2 +1,1 @@
-{"work": "10s", "rest": "2s", "long_rest": "2s", "circle_times": 2, "work_music": "work.wav", "rest_music": "rest.wav", "end_music": "end.wav",
-"work_rest_period":2}
+{"work": "3s", "rest": "2s", "long_rest": "2s", "circle_times": "1", "work_music": "work.wav", "rest_music": "rest.wav", "end_music": "end.wav", "work_rest_period": 2}
